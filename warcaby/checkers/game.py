@@ -2,6 +2,7 @@ import pygame
 from .board import Board
 from .constants import *
 from .pieces import Pawn
+from copy import deepcopy
 
 
 class Game:
@@ -18,6 +19,13 @@ class Game:
         self.killer = None
         self.find_all_valid_moves()
 
+    def winner(self):
+        if self.all_valid_moves:
+            return False
+        elif self.turn == BLACK:
+            return WHITE
+        else:
+            return BLACK
 
     def reset(self):
         self._init()
@@ -33,7 +41,8 @@ class Game:
             return
         for move in self.all_valid_moves[(piece.row, piece.col)]:
             row, col = move
-            pygame.draw.circle(self.win, GREEN, (col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2), 15)
+            pygame.draw.circle(self.win, GREEN,
+                               (col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2), 15)
 
     def select(self, row, col):
         piece = self.board.get_piece(row, col)
@@ -59,7 +68,6 @@ class Game:
                     self.change_turn()
                     return
 
-
     def change_turn(self):
         self.all_valid_moves = {}
         if self.turn == BLACK:
@@ -74,15 +82,16 @@ class Game:
                 if (row, col) in self.all_valid_moves:
                     del self.all_valid_moves[(row, col)]
                 if self.board.board[row][col] and self.board.board[row][col].color == self.turn:
-                        self.board.board[row][col].valid_moves = []
-                        self.board.board[row][col].killed = {}
-                        self.board.board[row][col].get_valid_moves(self.board.board, self.killer)
-                        self.all_valid_moves[(row, col)] = self.board.board[row][col].valid_moves
+                    self.board.board[row][col].valid_moves = []
+                    self.board.board[row][col].killed = {}
+                    self.board.board[row][col].get_valid_moves(self.board.board, self.killer)
+                    self.all_valid_moves[(row, col)] = self.board.board[row][col].valid_moves
 
         if self.killer:
             for row in range(ROWS):
                 for col in range(COLS):
-                    if self.board.board[row][col] and self.board.board[row][col].color == self.turn and (row != self.killer[0] or col != self.killer[1]):
+                    if self.board.board[row][col] and self.board.board[row][col].color == self.turn and (
+                            row != self.killer[0] or col != self.killer[1]):
                         self.all_valid_moves[(row, col)] = []
 
         found_possibility_to_kill = False
@@ -96,5 +105,6 @@ class Game:
 
         for row in range(ROWS):
             for col in range(COLS):
-                if self.board.board[row][col] and self.board.board[row][col].color == self.turn and not self.board.board[row][col].killed:
+                if self.board.board[row][col] and self.board.board[row][col].color == self.turn and not \
+                        self.board.board[row][col].killed:
                     self.all_valid_moves[(row, col)] = []

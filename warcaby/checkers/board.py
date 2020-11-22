@@ -1,5 +1,26 @@
 from .constants import *
 from .pieces import *
+from copy import deepcopy
+
+
+def get_table(tab):  # return representation of table as MATRIX (-2, -1, 0 , 1, 2 - pieces)
+    table = deepcopy(tab)
+    for row in range(ROWS):
+        for col in range(COLS):
+            if tab[row][col]:
+                table[row][col] = tab[row][col].repr()
+    return table
+
+
+def move_result(tab, piece_row, piece_col, row, col):  # give result what will happen when we choose given move
+    table = deepcopy(tab)
+    piece = table[piece_row][piece_col]
+    table[row][col], table[piece.row][piece.col] = table[piece.row][piece.col], table[row][col]
+    if row == ROWS - 1 or row == 0:
+        table[piece.row][piece.col] = King(piece.row, piece.col, piece.color) # making king
+    if (row, col) in piece.killed:
+        table[row][col] = 0
+    return get_table(table)
 
 
 class Board:
@@ -19,7 +40,6 @@ class Board:
             r, c = piece.killed[(row, col)]
             self.remove(r, c)
             return piece.row, piece.col
-        return None
 
     def remove(self, row, col):
         self.board[row][col] = 0

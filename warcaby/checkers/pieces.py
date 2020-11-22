@@ -1,7 +1,6 @@
 from .constants import *
 from copy import deepcopy
 
-# TODO: naprawa skokow
 
 class Piece:
     def __init__(self, row, col, color):
@@ -12,7 +11,7 @@ class Piece:
         self.y = 0
         self.calc_pos()
         self.valid_moves = []
-        self.killed = {} # dic (which move) : [which is killed]
+        self.killed = {}  # dic (which move) : [which is killed]
 
     def calc_pos(self):
         self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2
@@ -37,61 +36,51 @@ class Pawn(Piece):
         else:
             win.blit(black_pawn_img, (self.x - SQUARE_SIZE // 2, self.y - SQUARE_SIZE // 2))
 
+    def repr(self):
+        return -1 if self.color == BLACK else 1
+
+    def jump(self, board, param1, param2):
+        if board[self.row + param1][self.col + param2] and board[self.row + param1][
+            self.col + param2].color != self.color and not board[self.row + 2 * param1][self.col + 2 * param2]:
+            if (self.row + 2 * param1, self.col + 2 * param2) not in self.valid_moves:
+                self.valid_moves.append((self.row + 2 * param1, self.col + 2 * param2))
+                self.killed[(self.row + 2 * param1, self.col + 2 * param2)] = (self.row + param1, self.col + param2)
+            return True
+        return False
 
     def get_valid_moves(self, board, killer=False):
-        # check if there is possibility to kill (all 4 directions)
-        found_possibility_to_kill = False
 
+        # check if there is possibility to kill (all 4 directions)
+        found_possibility_to_kill = []
         # jump: right bottom
         if self.row <= ROWS - 3 and self.col <= ROWS - 3:
-            if board[self.row + 1][self.col + 1] and board[self.row + 1][self.col + 1].color != self.color and not board[self.row + 2][self.col + 2]:
-                if (self.row + 2, self.col + 2) not in self.valid_moves:
-                    self.valid_moves.append((self.row + 2, self.col + 2))
-                    self.killed[(self.row + 2, self.col + 2)] = (self.row + 1, self.col + 1)
-                found_possibility_to_kill = True
-
+            found_possibility_to_kill.append(self.jump(board, 1, 1))
         # jump: left bottom
         if self.row <= ROWS - 3 and self.col >= 2:
-            if board[self.row + 1][self.col - 1] and board[self.row + 1][self.col - 1].color != self.color and not board[self.row + 2][self.col - 2]:
-                if (self.row + 2, self.col - 2) not in self.valid_moves:
-                    self.valid_moves.append((self.row + 2, self.col - 2))
-                    self.killed[(self.row + 2, self.col - 2)] = (self.row + 1, self.col - 1)
-                found_possibility_to_kill = True
-
+            found_possibility_to_kill.append(self.jump(board, 1, -1))
         # jump: right upper
         if self.row >= 2 and self.col <= ROWS - 3:
-            if board[self.row - 1][self.col + 1] and board[self.row - 1][self.col + 1].color != self.color and not board[self.row - 2][self.col + 2]:
-                if (self.row - 2, self.col + 2) not in self.valid_moves:
-                    self.valid_moves.append((self.row - 2, self.col + 2))
-                    self.killed[(self.row - 2, self.col + 2)] = (self.row - 1, self.col + 1)
-                found_possibility_to_kill = True
-
+            found_possibility_to_kill.append(self.jump(board, -1, 1))
         # jump: left upper
         if self.row >= 2 and self.col >= 2:
-            if board[self.row - 1][self.col - 1] and board[self.row - 1][self.col - 1].color != self.color and not board[self.row - 2][self.col - 2]:
-                if (self.row - 2, self.col - 2) not in self.valid_moves:
-                    self.valid_moves.append((self.row - 2, self.col - 2))
-                    self.killed[(self.row - 2, self.col - 2)] = (self.row - 1, self.col - 1)
-                found_possibility_to_kill = True
+            found_possibility_to_kill.append(self.jump(board, -1, -1))
 
-        if killer:
-            return
-
-        if found_possibility_to_kill:
+        if killer or True in found_possibility_to_kill:
             return
 
         if self.color == BLACK:
             if self.col > 0 and not board[self.row - 1][self.col - 1]:
                 if (self.row - 1, self.col - 1) not in self.valid_moves:
                     self.valid_moves.append((self.row - 1, self.col - 1))
-            if self.col <= ROWS-2 and not board[self.row - 1][self.col + 1]:
+            if self.col <= ROWS - 2 and not board[self.row - 1][self.col + 1]:
                 if (self.row - 1, self.col + 1) not in self.valid_moves:
                     self.valid_moves.append((self.row - 1, self.col + 1))
+
         if self.color == WHITE:
             if self.col > 0 and not board[self.row + 1][self.col - 1]:
                 if (self.row + 1, self.col - 1) not in self.valid_moves:
                     self.valid_moves.append((self.row + 1, self.col - 1))
-            if self.col <= ROWS-2 and not board[self.row + 1][self.col + 1]:
+            if self.col <= ROWS - 2 and not board[self.row + 1][self.col + 1]:
                 if (self.row + 1, self.col + 1) not in self.valid_moves:
                     self.valid_moves.append((self.row + 1, self.col + 1))
 
@@ -106,5 +95,8 @@ class King(Piece):
         else:
             win.blit(black_king_img, (self.x - SQUARE_SIZE // 2, self.y - SQUARE_SIZE // 2))
 
-    def get_valid_moves(self, a, b, c):
+    def repr(self):
+        return -1 if self.color == BLACK else 1
+
+    def get_valid_moves(self, board, killer=False):
         pass
