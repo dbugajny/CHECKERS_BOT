@@ -118,7 +118,7 @@ class King(Piece):
         for i in range(ROWS - 1):
             if self.row + i <= ROWS - 2 and self.col + i <= ROWS - 2:
                 if board[self.row + i][self.col + i] and board[self.row + i][self.col + i].color != self.color:
-                    if board[self.row + i + 1][self.col + i + 1] and board[self.row + i][self.col + i].color != self.color:
+                    if board[self.row + i + 1][self.col + i + 1] and board[self.row + i + 1][self.col + i + 1].color != self.color:
                         break
                 found_possibility_to_kill.append(self.check_jump(board, i, i, True))
                 if found_possibility_to_kill[-1]:
