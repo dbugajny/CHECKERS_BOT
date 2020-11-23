@@ -16,7 +16,7 @@ def move_result(tab, piece_row, piece_col, row, col):  # give result what will h
     table = deepcopy(tab)
     piece = table[piece_row][piece_col]
     table[row][col], table[piece.row][piece.col] = table[piece.row][piece.col], table[row][col]
-    if row == ROWS - 1 or row == 0:
+    if row == ROWS - 1 and piece.color == WHITE or row == 0 and piece.color == BLACK:
         table[piece.row][piece.col] = King(piece.row, piece.col, piece.color) # making king
     if (row, col) in piece.killed:
         table[row][col] = 0
@@ -34,7 +34,7 @@ class Board:
     def move(self, piece, row, col):  # change piece to new position (row, col)
         self.board[row][col], self.board[piece.row][piece.col] = self.board[piece.row][piece.col], self.board[row][col]
         piece.move_piece(row, col)
-        if row == ROWS - 1 or row == 0:
+        if row == ROWS - 1 and piece.color == WHITE or row == 0 and piece.color == BLACK:
             self.board[piece.row][piece.col] = King(piece.row, piece.col, piece.color) # making king
         if (row, col) in piece.killed:
             r, c = piece.killed[(row, col)]
