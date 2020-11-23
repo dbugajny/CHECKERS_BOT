@@ -22,7 +22,7 @@ class Piece:
         self.col = col
         self.calc_pos()
 
-    def check_jump(self, board, param1, param2):
+    def check_jump(self, board, param1, param2, king=False):
         a = -1 if param1 < 0 else 1
         b = -1 if param2 < 0 else 1
         if board[self.row + param1][self.col + param2] and board[self.row + param1][
@@ -30,6 +30,19 @@ class Piece:
             if (self.row + param1 + a, self.col + param2 + b) not in self.valid_moves:
                 self.valid_moves.append((self.row + param1 + a, self.col + param2 + b))
                 self.killed[(self.row + param1 + a, self.col + param2 + b)] = (self.row + param1, self.col + param2)
+
+            if king:
+                for i in range(1, ROWS-1):
+                    if 0 <= self.row + i * a + param1 <= ROWS-1 and 0 <= self.col + i * b + param2 <= ROWS-1:
+                        print(self.row, self.col)
+                        print(i, a, b)
+                        print("-------")
+                        if not board[self.row + i * a + param1][self.col + i * b + param2]:
+                            if (self.row + i * a + param1, self.col + i * b + param2) not in self.valid_moves:
+                                self.valid_moves.append((self.row + i * a + param1, self.col + i * b + param2))
+                                self.killed[(self.row + i * a + param1, self.col + i * b + param2)] = ( self.row + param1, self.col + param2)
+                        else:
+                            return True
             return True
         return False
 
@@ -110,7 +123,7 @@ class King(Piece):
                 if board[self.row + i][self.col + i] and board[self.row + i][self.col + i].color != self.color:
                     if board[self.row + i + 1][self.col + i + 1] and board[self.row + i][self.col + i].color != self.color:
                         break
-                found_possibility_to_kill.append(self.check_jump(board, i, i))
+                found_possibility_to_kill.append(self.check_jump(board, i, i, True))
                 if found_possibility_to_kill[-1]:
                     break
 
@@ -120,7 +133,7 @@ class King(Piece):
                 if board[self.row + i][self.col - i] and board[self.row + i][self.col - i].color != self.color:
                     if board[self.row + i + 1][self.col - i - 1] and board[self.row + i + 1][self.col - i - 1].color != self.color:
                         break
-                found_possibility_to_kill.append(self.check_jump(board, i, -i))
+                found_possibility_to_kill.append(self.check_jump(board, i, -i, True))
                 if found_possibility_to_kill[-1]:
                     break
 
@@ -130,7 +143,7 @@ class King(Piece):
                 if board[self.row - i][self.col + i] and board[self.row - i][self.col + i].color != self.color:
                     if board[self.row - i - 1][self.col + i + 1] and board[self.row - i - 1][self.col + i + 1].color != self.color:
                         break
-                found_possibility_to_kill.append(self.check_jump(board, -i, i))
+                found_possibility_to_kill.append(self.check_jump(board, -i, i, True))
                 if found_possibility_to_kill[-1]:
                     break
 
@@ -140,7 +153,7 @@ class King(Piece):
                 if board[self.row - i][self.col - i] and board[self.row - i][self.col - i].color != self.color:
                     if board[self.row - i - 1][self.col - i - 1] and board[self.row - i - 1][self.col - i - 1].color != self.color:
                         break
-                found_possibility_to_kill.append(self.check_jump(board, -i, -i))
+                found_possibility_to_kill.append(self.check_jump(board, -i, -i, True))
                 if found_possibility_to_kill[-1]:
                     break
 
