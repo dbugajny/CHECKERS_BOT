@@ -100,14 +100,13 @@ class King(Piece):
     def repr(self):
         return -1 if self.color == BLACK else 1
 
-                
     def get_valid_moves(self, board, killer=False):
         # check if there is possibility to kill (all 4 directions)
         found_possibility_to_kill = []
 
         # jump: right bottom
         for i in range(ROWS - 1):
-            if self.row + i <= ROWS - 3 and self.col + i <= ROWS - 3:
+            if self.row + i <= ROWS - 2 and self.col + i <= ROWS - 2:
                 if board[self.row + i][self.col + i] and board[self.row + i][self.col + i].color != self.color:
                     if board[self.row + i + 1][self.col + i + 1] and board[self.row + i][self.col + i].color != self.color:
                         break
@@ -117,7 +116,7 @@ class King(Piece):
 
         # jump: left bottom
         for i in range(ROWS - 1):
-            if self.row + i <= ROWS - 3 and self.col - i >= 2:
+            if self.row + i <= ROWS - 2 and self.col - i >= 2:
                 if board[self.row + i][self.col - i] and board[self.row + i][self.col - i].color != self.color:
                     if board[self.row + i + 1][self.col - i - 1] and board[self.row + i + 1][self.col - i - 1].color != self.color:
                         break
@@ -127,7 +126,7 @@ class King(Piece):
 
         # jump: right upper
         for i in range(ROWS - 1):
-            if self.row - i >= 2 and self.col + i <= ROWS - 3:
+            if self.row - i >= 1 and self.col + i <= ROWS - 2:
                 if board[self.row - i][self.col + i] and board[self.row - i][self.col + i].color != self.color:
                     if board[self.row - i - 1][self.col + i + 1] and board[self.row - i - 1][self.col + i + 1].color != self.color:
                         break
@@ -137,7 +136,7 @@ class King(Piece):
 
         # jump: left upper
         for i in range(ROWS - 1):
-            if self.row - i >= 2 and self.col - i >= 2:
+            if self.row - i >= 1 and self.col - i >= 1:
                 if board[self.row - i][self.col - i] and board[self.row - i][self.col - i].color != self.color:
                     if board[self.row - i - 1][self.col - i - 1] and board[self.row - i - 1][self.col - i - 1].color != self.color:
                         break
