@@ -34,9 +34,6 @@ class Piece:
             if king:
                 for i in range(1, ROWS-1):
                     if 0 <= self.row + i * a + param1 <= ROWS-1 and 0 <= self.col + i * b + param2 <= ROWS-1:
-                        print(self.row, self.col)
-                        print(i, a, b)
-                        print("-------")
                         if not board[self.row + i * a + param1][self.col + i * b + param2]:
                             if (self.row + i * a + param1, self.col + i * b + param2) not in self.valid_moves:
                                 self.valid_moves.append((self.row + i * a + param1, self.col + i * b + param2))
