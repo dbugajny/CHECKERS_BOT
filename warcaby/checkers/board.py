@@ -23,6 +23,7 @@ def move_result(tab, piece_row, piece_col, row, col):  # give result what will h
     return get_table(table)
 
 
+
 class Board:
     def __init__(self):
         self.board = []

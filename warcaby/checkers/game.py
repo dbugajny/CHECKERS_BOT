@@ -1,5 +1,5 @@
 import pygame
-from .board import Board
+from .board import Board, move_result, get_table
 from .constants import *
 from .pieces import Pawn
 from copy import deepcopy
@@ -108,3 +108,12 @@ class Game:
                 if self.board.board[row][col] and self.board.board[row][col].color == self.turn and not \
                         self.board.board[row][col].killed:
                     self.all_valid_moves[(row, col)] = []
+
+    def get_all_possible_board_states(self):
+        board_states = []
+        for piece in self.all_valid_moves:
+            if len(self.all_valid_moves[piece]) > 0:
+                for piece_destination in self.all_valid_moves[piece]:
+                    board_states.append(
+                        move_result(self.board.board, piece[0], piece[1], piece_destination[0], piece_destination[1]))
+        return board_states

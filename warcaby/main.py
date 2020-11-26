@@ -2,6 +2,8 @@ import pygame
 from checkers.constants import *
 from checkers.game import *
 from checkers.board import get_table
+from Neural_Network_Bot.Board_evaluator import Board_Evaluator
+
 FPS = 60
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -19,6 +21,7 @@ def main_gui(window):
     run = True
     clock = pygame.time.Clock()
     game = Game(window)
+    predictor = Board_Evaluator([(50, 'relu')])
 
     while run:
         if game.winner():
