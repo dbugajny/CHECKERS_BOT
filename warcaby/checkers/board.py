@@ -1,6 +1,8 @@
-from .constants import *
-from .pieces import *
+from .piece import Piece
+from .king import King
+from .pawn import Pawn
 from copy import deepcopy
+from .constants import *
 
 
 def get_table(tab):  # return representation of table as MATRIX (-2, -1, 0 , 1, 2 - pieces)
@@ -21,7 +23,6 @@ def move_result(tab, piece_row, piece_col, row, col):  # give result what will h
     if (row, col) in piece.killed:
         table[row][col] = 0
     return get_table(table)
-
 
 
 class Board:
@@ -66,3 +67,4 @@ class Board:
                 piece = self.board[row][col]
                 if piece != 0:
                     piece.draw(win)
+        pygame.display.flip()

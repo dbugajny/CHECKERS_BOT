@@ -1,8 +1,10 @@
 import pygame
-from checkers.constants import *
-from checkers.game import *
-from checkers.board import get_table
-from Neural_Network_Bot.Board_evaluator import Board_Evaluator
+from warcaby.checkers.constants import *
+from warcaby.checkers.game import *
+from warcaby.checkers.board import get_table
+from warcaby.Neural_Network_Bot.Board_evaluator import Board_Evaluator
+from warcaby.Neural_Network_Bot.Gym import Gym
+from warcaby.Neural_Network_Bot.Player import Player
 
 FPS = 60
 
@@ -43,6 +45,7 @@ def main_gui(window):
 
 
 def main_tui():
+    print("works")
     run = True
 
     game = Game(None)
@@ -62,4 +65,13 @@ def main_tui():
         game.select_by_giving(a, b, c, d)  # don't check if (a, b) is valid piece and (c, d) is valid destination
 
 
-main_gui(WIN)
+def main_gym():
+
+    black = Player("BLACK", [(200, "relu"), (200, "relu"), (200, "relu")])
+    white = Player("WHITE", [(100, "relu"), (100, "sigmoid")])
+
+    gym = Gym(black, white, WIN)
+    gym.train_models(100)
+
+
+main_gym()
