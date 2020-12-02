@@ -16,13 +16,15 @@ class Board_Evaluator():
 
         self.model.compile(
             loss=keras.losses.BinaryCrossentropy(from_logits=True),
-            optimizer=keras.optimizers.Adam(lr=0.003),
+            optimizer=keras.optimizers.Adam(lr=0.03),
             metrics=["accuracy"])
 
-    def rate_board_state(self, board):
-        input_data = np.asarray(board).astype('float32').reshape(64)
-        answer = self.model.predict(np.array([input_data]))
-        return answer[0][0]
+    def rate_board_states(self, boards):
+        first_dim = len(boards)
+
+        input_data = np.asarray(boards).astype('float32').reshape(first_dim, 64)
+        answer = self.model.predict([input_data])
+        return answer
 
     def learn_from_played_game(self, game_data, game_label):
         batch_size = len(game_data)

@@ -6,9 +6,9 @@ from warcaby.Neural_Network_Bot.Board_evaluator import Board_Evaluator
 from warcaby.Neural_Network_Bot.Gym import Gym
 from warcaby.Neural_Network_Bot.Player import Player
 
-FPS = 60
+FPS = 10
 
-# WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('CHECKERS')
 
 
@@ -23,7 +23,6 @@ def main_gui(window):
     run = True
     clock = pygame.time.Clock()
     game = Game(window)
-    predictor = Board_Evaluator([(50, 'relu')])
 
     while run:
         if game.winner():
@@ -67,12 +66,13 @@ def main_tui():
 
 def main_gym():
     black = Player("BLACK",
-                   [(200, "relu")])  # second argument is path to model or array of properties
+                   [(256, 'relu')])  # second argument is path to model or array of properties
     white = Player("WHITE",
-                   'Neural_Network_Bot/saved_models/white.h5')
+                   [(256, 'relu')])
 
-    gym = Gym(black, white, None)
+    # 'Neural_Network_Bot/saved_models/white.h5'
+    gym = Gym(black, white, WIN)
     gym.train_models(3000)
-
+    gym.play_against_bot()
 
 main_gym()

@@ -11,13 +11,8 @@ class Player:
 
     def pick_index_from_possible_board_states(self, array_of_possible_boards):
 
-        rates_of_board = []
-        for board in array_of_possible_boards:
-            rates_of_board.append(self.brain.rate_board_state(board))
-
+        rates_of_board = self.brain.rate_board_states(array_of_possible_boards)
         picked_index = random.choices(range(len(rates_of_board)), rates_of_board)[0]
-        if picked_index < 0 or picked_index > len(array_of_possible_boards) - 1:
-            print(picked_index, rates_of_board)
         picked_board = array_of_possible_boards[picked_index]
         self.add_data_from_chosen_move(picked_board)
         return picked_index
