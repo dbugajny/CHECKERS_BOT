@@ -21,12 +21,19 @@ class Game:
         if self.turns_counter > self.max_turns:
             self.labels = [0 for _ in range(self.turns_counter)]
             return "DRAW"
-        if self.all_valid_moves:
+        if not self.all_valid_moves.values:
             return False
-        elif self.turn == BLACK:  # maybe it should be changed with labels for WHITE
+        end = True
+        for elem in self.all_valid_moves.values():
+            if elem:
+                end = False
+                break
+        if not end:
+            return False
+        if self.turn == BLACK:  # maybe it should be changed with labels for WHITE
             self.labels = [1 * (-1) ** i for i in range(self.turns_counter)]
             return WHITE
-        elif self.turn == WHITE:
+        if self.turn == WHITE:
             self.labels = [-(1 * (-1) ** i) for i in range(self.turns_counter)]
             return BLACK
 
@@ -56,7 +63,7 @@ class Game:
             self.killer = self.board.move(self.selected2, row, col)
             if not self.killer or self.selected2.row == 0 or self.selected2.row == 7:
                 print(self.killer)
-                print(self.selected2.row,  self.selected2.col)
+                print(self.selected2.row, self.selected2.col)
                 print("---------")
                 self.killer = None
                 self.selected = None
@@ -122,15 +129,14 @@ class Game:
                         self.board.board[row][col].killed:
                     self.all_valid_moves[(row, col)] = []
 
-
-
     def get_all_possible_board_states_and_moves(self):
         board_states = []
         required_moves = []
         for piece in self.all_valid_moves:
-            if len(self.all_valid_moves[piece]) > 0:
+            if self.all_valid_moves[piece]:
                 for piece_destination in self.all_valid_moves[piece]:
                     board_states.append(
                         move_result(self.board.board, piece[0], piece[1], piece_destination[0], piece_destination[1]))
-                    required_moves.append((self.board.board[piece[0]][piece[1]], piece_destination[0], piece_destination[1]))
+                    required_moves.append(
+                        (self.board.board[piece[0]][piece[1]], piece_destination[0], piece_destination[1]))
         return board_states, required_moves

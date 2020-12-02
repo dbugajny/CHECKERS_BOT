@@ -8,7 +8,7 @@ from warcaby.Neural_Network_Bot.Player import Player
 
 FPS = 60
 
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+# WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('CHECKERS')
 
 
@@ -66,12 +66,13 @@ def main_tui():
 
 
 def main_gym():
+    black = Player("BLACK",
+                   [(200, "relu")])  # second argument is path to model or array of properties
+    white = Player("WHITE",
+                   'Neural_Network_Bot/saved_models/white.h5')
 
-    black = Player("BLACK", [(200, "relu"), (200, "relu"), (200, "relu")])
-    white = Player("WHITE", [(100, "relu"), (100, "sigmoid")])
-
-    gym = Gym(black, white, WIN)
-    gym.train_models(100)
+    gym = Gym(black, white, None)
+    gym.train_models(3000)
 
 
 main_gym()

@@ -8,17 +8,15 @@ from keras import layers
 
 
 class Board_Evaluator():
-    def __init__(self, layers_specification):  # layers_specification is array of tuples describing network
-        self.model = keras.Sequential()
-        self.model.add(keras.Input(shape=64))  # board has 64 squares
+    def __init__(self, properties):  # properties is array or previously created model
+        if type(properties) == list:
+            self.model = self.create_model(properties)
+        else:
+            self.model = keras.models.load_model(properties, compile=False)
 
-        for layer in layers_specification:
-            self.model.add(layers.Dense(units=layer[0], activation=layer[1]))
-
-        self.model.add(layers.Dense(1, activation="sigmoid"))  # single output for rating
         self.model.compile(
             loss=keras.losses.BinaryCrossentropy(from_logits=True),
-            optimizer=keras.optimizers.Adam(lr=0.01),
+            optimizer=keras.optimizers.Adam(lr=0.003),
             metrics=["accuracy"])
 
     def rate_board_state(self, board):
@@ -31,3 +29,14 @@ class Board_Evaluator():
         x_train = np.asarray(game_data).reshape(len(game_data), 64)
         y_train = np.full((len(game_data)), game_label)
         self.model.fit(x_train, y_train, batch_size=batch_size, epochs=1, verbose=0)
+
+    def create_model(self, layers_specification):
+        model = keras.Sequential()
+        model.add(keras.Input(shape=64))  # board has 64 squares
+
+        for layer in layers_specification:
+            model.add(keras.layers.Dense(units=layer[0], activation=layer[1]))
+
+        model.add(keras.layers.Dense(1, activation="sigmoid"))  # single output for rating
+
+        return model

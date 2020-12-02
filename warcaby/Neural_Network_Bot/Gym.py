@@ -14,13 +14,14 @@ class Gym:
         self.window = WIN
         self.black_wins = 0
         self.white_wins = 0
+        self.epochs = 0
 
     def play_game(self):
         run = True
         while run:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
+            # for event in pygame.event.get():
+            #     if event.type == pygame.QUIT:
+            #         sys.exit()
 
             if self.game.winner():
                 run = False
@@ -31,8 +32,6 @@ class Gym:
                     self.black_wins += 1
                 break
 
-            self.game.board.draw_board(self.window)
-            pg.time.delay(250)
             move_param = self.game.get_all_possible_board_states_and_moves()
 
             if self.game.turn == BLACK:
@@ -41,9 +40,6 @@ class Gym:
             else:
                 move = self.white_player.pick_move(move_param[0], move_param[1])
                 self.game.select_by_giving(move[0].row, move[0].col, move[1], move[2])
-
-            self.game.board.draw_board(self.window)
-            pg.time.delay(250)
 
     def players_learn(self):
         self.black_player.learn_from_game_data()
@@ -54,3 +50,12 @@ class Gym:
             self.play_game()
             self.players_learn()
             self.game = Game(self.window)
+            print("czarne: ", self.black_wins, " białe: ", self.white_wins)
+            if i % 20 == 0:
+                self.save_models()
+            self.epochs += 1
+
+    def save_models(self):
+        print("saving")
+        self.white_player.brain.model.save('Neural_Network_Bot/saved_models/white.h5')
+        self.black_player.brain.model.save('Neural_Network_Bot/saved_models/black.h5')
