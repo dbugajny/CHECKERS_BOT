@@ -1,34 +1,41 @@
-import pygame
-from .board import Board
+from .board import Board, get_table, move_result
 from .constants import *
-from .pieces import Pawn
-from copy import deepcopy
 
 
 class Game:
     def __init__(self, win):
-        self._init()
-        self.win = win
-
-    def _init(self):
+        self.turns_counter = 0
+        self.max_turns = 200
+        self.board_history = []
+        self.labels = []
         self.selected = None
         self.selected2 = None
+        self.killer = None
         self.board = Board()
         self.turn = BLACK  # black starts
         self.all_valid_moves = {}  # all valid moves for player, which turn is
-        self.killer = None
         self.find_all_valid_moves()
+        self.win = win
 
     def winner(self):
-        if self.all_valid_moves:
+        if self.turns_counter > self.max_turns:
+            self.labels = [0 for _ in range(self.turns_counter)]
+            return "DRAW"
+        if not self.all_valid_moves.values:
             return False
-        elif self.turn == BLACK:
+        end = True
+        for elem in self.all_valid_moves.values():
+            if elem:
+                end = False
+                break
+        if not end:
+            return False
+        if self.turn == BLACK:  # maybe it should be changed with labels for WHITE
+            self.labels = [1 * (-1) ** i for i in range(self.turns_counter)]
             return WHITE
-        else:
+        if self.turn == WHITE:
+            self.labels = [-(1 * (-1) ** i) for i in range(self.turns_counter)]
             return BLACK
-
-    def reset(self):
-        self._init()
 
     def update(self):
         self.board.draw_board(self.win)
@@ -54,21 +61,34 @@ class Game:
             self.selected2 = self.selected
         elif self.selected2 and (row, col) in self.all_valid_moves[(self.selected2.row, self.selected2.col)]:
             self.killer = self.board.move(self.selected2, row, col)
-            if not self.killer:
-                self.selected = None
-                self.selected2 = None
+            if not self.killer or self.selected2.row == 0 or self.selected2.row == 7:
                 self.change_turn()
                 return
             else:
                 self.find_all_valid_moves()
                 if not self.all_valid_moves[(self.killer[0], self.killer[1])]:
-                    self.killer = None
-                    self.selected = None
-                    self.selected2 = None
                     self.change_turn()
                     return
 
+    def select_by_giving(self, row_piece, col_piece, row_destination, col_destination):
+        piece = self.board.get_piece(row_piece, col_piece)
+        self.killer = self.board.move(piece, row_destination, col_destination)
+        if not self.killer or row_destination == 0 or row_destination == 7:
+            self.change_turn()
+            return
+        else:
+            self.find_all_valid_moves()
+            if not self.all_valid_moves[(self.killer[0], self.killer[1])]:
+                self.killer = None
+                self.change_turn()
+                return
+
     def change_turn(self):
+        self.killer = None
+        self.selected = None
+        self.selected2 = None
+        self.board_history.append(get_table(self.board.board))
+        self.turns_counter += 1
         self.all_valid_moves = {}
         if self.turn == BLACK:
             self.turn = WHITE
@@ -77,6 +97,8 @@ class Game:
         self.find_all_valid_moves()
 
     def find_all_valid_moves(self):
+        found_possibility_to_kill = False
+
         for row in range(ROWS):
             for col in range(COLS):
                 if (row, col) in self.all_valid_moves:
@@ -85,20 +107,12 @@ class Game:
                     self.board.board[row][col].valid_moves = []
                     self.board.board[row][col].killed = {}
                     self.board.board[row][col].get_valid_moves(self.board.board, self.killer)
-                    self.all_valid_moves[(row, col)] = self.board.board[row][col].valid_moves
 
-        if self.killer:
-            for row in range(ROWS):
-                for col in range(COLS):
-                    if self.board.board[row][col] and self.board.board[row][col].color == self.turn and (
-                            row != self.killer[0] or col != self.killer[1]):
-                        self.all_valid_moves[(row, col)] = []
+                    if self.board.board[row][col] and self.board.board[row][col].killed:
+                        found_possibility_to_kill = True
 
-        found_possibility_to_kill = False
-        for row in range(ROWS):
-            for col in range(COLS):
-                if self.board.board[row][col] and self.board.board[row][col].killed:
-                    found_possibility_to_kill = True
+                    if not self.killer or (row == self.killer[0] or col == self.killer[1]):
+                        self.all_valid_moves[(row, col)] = self.board.board[row][col].valid_moves
 
         if not found_possibility_to_kill:
             return
@@ -108,3 +122,16 @@ class Game:
                 if self.board.board[row][col] and self.board.board[row][col].color == self.turn and not \
                         self.board.board[row][col].killed:
                     self.all_valid_moves[(row, col)] = []
+
+
+    def get_all_possible_board_states_and_moves(self):
+        board_states = []
+        required_moves = []
+        for piece in self.all_valid_moves:
+            if self.all_valid_moves[piece]:
+                for piece_destination in self.all_valid_moves[piece]:
+                    board_states.append(
+                        move_result(self.board.board, piece[0], piece[1], piece_destination[0], piece_destination[1]))
+                    required_moves.append(
+                        (self.board.board[piece[0]][piece[1]], piece_destination[0], piece_destination[1]))
+        return board_states, required_moves
