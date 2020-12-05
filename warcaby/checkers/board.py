@@ -6,7 +6,7 @@ from .constants import *
 
 
 def get_table(tab):  # return representation of table as MATRIX (-2, -1, 0 , 1, 2 - pieces)
-    table = deepcopy(tab)
+    table = [[0]*8]*8
     for row in range(ROWS):
         for col in range(COLS):
             if tab[row][col]:

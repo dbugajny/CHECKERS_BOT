@@ -20,9 +20,11 @@ class King(Piece):
         found_possibility_to_kill = []
 
         # jump: right bottom
-        for i in range(ROWS - 1):
+        for i in range(1, ROWS - 1):
             if self.row + i <= ROWS - 2 and self.col + i <= ROWS - 2:
-                if board[self.row + i][self.col + i] and board[self.row + i][self.col + i].color != self.color:
+                if board[self.row + i][self.col + i]:
+                    if board[self.row + i][self.col + i].color == self.color:
+                        break
                     if board[self.row + i + 1][self.col + i + 1] and board[self.row + i + 1][self.col + i + 1].color != self.color:
                         break
                 found_possibility_to_kill.append(self.check_jump(board, i, i, True))
@@ -30,9 +32,11 @@ class King(Piece):
                     break
 
         # jump: left bottom
-        for i in range(ROWS - 1):
-            if self.row + i <= ROWS - 2 and self.col - i >= 2:
-                if board[self.row + i][self.col - i] and board[self.row + i][self.col - i].color != self.color:
+        for i in range(1, ROWS - 1):
+            if self.row + i <= ROWS - 2 and self.col - i >= 1:
+                if board[self.row + i][self.col - i]:
+                    if board[self.row + i][self.col - i].color == self.color:
+                        break
                     if board[self.row + i + 1][self.col - i - 1] and board[self.row + i + 1][self.col - i - 1].color != self.color:
                         break
                 found_possibility_to_kill.append(self.check_jump(board, i, -i, True))
@@ -40,9 +44,11 @@ class King(Piece):
                     break
 
         # jump: right upper
-        for i in range(ROWS - 1):
+        for i in range(1, ROWS - 1):
             if self.row - i >= 1 and self.col + i <= ROWS - 2:
-                if board[self.row - i][self.col + i] and board[self.row - i][self.col + i].color != self.color:
+                if board[self.row - i][self.col + i]:
+                    if board[self.row - i][self.col + i].color == self.color:
+                        break
                     if board[self.row - i - 1][self.col + i + 1] and board[self.row - i - 1][self.col + i + 1].color != self.color:
                         break
                 found_possibility_to_kill.append(self.check_jump(board, -i, i, True))
@@ -50,9 +56,11 @@ class King(Piece):
                     break
 
         # jump: left upper
-        for i in range(ROWS - 1):
+        for i in range(1, ROWS - 1):
             if self.row - i >= 1 and self.col - i >= 1:
-                if board[self.row - i][self.col - i] and board[self.row - i][self.col - i].color != self.color:
+                if board[self.row - i][self.col - i]:
+                    if board[self.row - i][self.col - i].color == self.color:
+                        break
                     if board[self.row - i - 1][self.col - i - 1] and board[self.row - i - 1][self.col - i - 1].color != self.color:
                         break
                 found_possibility_to_kill.append(self.check_jump(board, -i, -i, True))

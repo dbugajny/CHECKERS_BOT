@@ -16,12 +16,13 @@ class Board_Evaluator():
 
         self.model.compile(
             loss=keras.losses.BinaryCrossentropy(from_logits=True),
-            optimizer=keras.optimizers.Adam(lr=0.03),
+            optimizer=keras.optimizers.Adam(lr=0.0001),
             metrics=["accuracy"])
 
     def rate_board_states(self, boards):
         first_dim = len(boards)
-
+        if first_dim == 0:
+            print("thats why")
         input_data = np.asarray(boards).astype('float32').reshape(first_dim, 64)
         answer = self.model.predict([input_data])
         return answer

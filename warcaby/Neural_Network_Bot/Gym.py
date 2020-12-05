@@ -33,12 +33,17 @@ class Gym:
                     self.black_player.game_result = 0
                     self.white_history.append(1)
                     self.black_history.append(0)
-                if self.game.winner() == Color.BLACK:
+                elif self.game.winner() == Color.BLACK:
                     self.black_wins += 1
                     self.white_player.game_result = 0
                     self.black_player.game_result = 1
                     self.white_history.append(0)
                     self.black_history.append(1)
+                elif self.game.winner() == "DRAW":
+                    self.white_player.game_result = 0.5
+                    self.black_player.game_result = 0.5
+                    self.white_history.append(0.5)
+                    self.black_history.append(0.5)
                 break
 
             move_param = self.game.get_all_possible_board_states_and_moves()
@@ -88,12 +93,12 @@ class Gym:
         self.white_player.learn_from_game_data()
 
     def train_models(self, epochs):
-        for i in range(epochs):
+        for i in range(epochs): # threading
             self.self_play()
             self.players_learn()
             self.game = Game(self.window)
             print("czarne: ", self.black_wins, " białe: ", self.white_wins)
-            if i % 50 == 0:
+            if i % 50 == 49:
                 self.save_models()
             self.epochs += 1
 
