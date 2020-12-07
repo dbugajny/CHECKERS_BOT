@@ -10,6 +10,7 @@ def get_row_col_from_mouse(pos):
     col = x // SQUARE_SIZE
     return row, col
 
+
 class BoardPredictor:
     def __init__(self, win):
         self.board = Board()
@@ -41,12 +42,14 @@ class BoardPredictor:
             for col in range(ROWS):
                 self.board.board[row][col] = 0
 
+
 def board_predict():
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('BOARD PREDICT')
     board_predictor = BoardPredictor(WIN)
     run = True
     row, col = None, None
+
     print("OZNACZENIE KLAWISZY")
     print("q - bialy pionek")
     print("w - czarny pionek")
@@ -80,3 +83,4 @@ def board_predict():
                     print(f"ACTUAL RATE: {rate:.3f}")
 
         board_predictor.update()
+
