@@ -41,7 +41,7 @@ class BoardPredictor:
             for col in range(ROWS):
                 self.board.board[row][col] = 0
 
-def main():
+def board_predict():
     WIN = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption('BOARD PREDICT')
     board_predictor = BoardPredictor(WIN)
@@ -80,5 +80,3 @@ def main():
                     print(f"ACTUAL RATE: {rate:.3f}")
 
         board_predictor.update()
-
-main()
