@@ -101,8 +101,16 @@ class Gym:
             if i % 50 == 49:
                 self.save_models()
             self.epochs += 1
+        self.save_results()
 
     def save_models(self):
         print("saving")
         self.white_player.brain.model.save('Neural_Network_Bot/saved_models/white.h5')
         self.black_player.brain.model.save('Neural_Network_Bot/saved_models/black.h5')
+
+
+    def save_results(self):
+        with open('wyniki.txt', 'w') as f:
+            for elem in self.white_history:
+                f.write("%s \n" %elem)
+

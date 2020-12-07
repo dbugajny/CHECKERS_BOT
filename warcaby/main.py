@@ -66,14 +66,14 @@ def main_tui():
 
 def main_gym():
     black = Player("BLACK",
-                   'Neural_Network_Bot/saved_models/black.h5')  # second argument is path to model or array of properties
+                   [(128, 'relu'), (256, 'relu'), (128, 'relu'), (64, 'relu')])  # second argument is path to model or array of properties
     white = Player("WHITE",
                    'Neural_Network_Bot/saved_models/white.h5')
 
     # 'Neural_Network_Bot/saved_models/white.h5'
     gym = Gym(black, white, WIN)
-    gym.train_models(100)
-    #gym.play_against_bot()
+    gym.train_models(1000)
+    gym.play_against_bot()
 
 
 main_gym()

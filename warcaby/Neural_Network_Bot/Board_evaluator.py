@@ -16,7 +16,7 @@ class Board_Evaluator():
 
         self.model.compile(
             loss=keras.losses.BinaryCrossentropy(from_logits=True),
-            optimizer=keras.optimizers.Adam(lr=0.0001),
+            optimizer=keras.optimizers.Adam(lr=0.1),
             metrics=["accuracy"])
 
     def rate_board_states(self, boards):
